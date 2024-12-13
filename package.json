@@ -9,12 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@flaticon/flaticon-uicons": "^3.3.1",
+    "@next/font": "^14.2.15",
+    "axios": "^1.7.9",
+    "js-cookie": "^3.0.5",
+    "jsonwebtoken": "^9.0.2",
+    "next": "13.5.7",
+    "next-auth": "^4.24.11",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "13.5.7"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "autoprefixer": "^10",
+    "daisyui": "^4.12.22",
     "postcss": "^8",
     "tailwindcss": "^3"
   }
