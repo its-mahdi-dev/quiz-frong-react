@@ -18,10 +18,11 @@ export default function Auth() {
     { value: "0", label: "بازیکن" },
     { value: "1", label: "طراح" },
   ];
+  console.log(process.env)
   const login = async (e) =>{
     setLoading(true);
     e.preventDefault();
-      await axios.post(process.env.BASE_URL + "auth/login" , {phone,password}
+      await axios.post("http://localhost:5000/api/auth/login" , {phone,password}
       ).then(function(response){
         let token = response.data.token;
         Cookies.set('token',token)
