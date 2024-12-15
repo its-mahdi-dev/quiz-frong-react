@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import Input from "./forms/input";
 import Table from "./table";
 
@@ -10,6 +10,9 @@ export default function SearchTable({ head, body, searchIndexes, title }) {
   searchIndexes.forEach((i) => {
     searchNames += head[i] + " , ";
   });
+  useEffect(() => {
+    setItems(body);
+  }, [body]);
   const doSearch = (value) =>{
     setSearch(value);
     setItems([]);

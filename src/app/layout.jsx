@@ -1,27 +1,28 @@
 "use client";
-import { Inter } from 'next/font/google'
+import { Inter } from "next/font/google";
 import "@flaticon/flaticon-uicons/css/regular/rounded.css";
 import "@flaticon/flaticon-uicons/css/solid/rounded.css";
-import './globals.css'
-import localFont from '@next/font/local'
-import Cookies from 'js-cookie';
-import { redirect, usePathname } from 'next/navigation';
+import "./globals.css";
+import localFont from "@next/font/local";
+import Cookies from "js-cookie";
+import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react";
 const iransans = localFont({
   src: [
     {
-      path: '../../public/fonts/iransans/ttf/IRANSansWeb(FaNum).ttf',
-    }
+      path: "../../public/fonts/iransans/ttf/IRANSansWeb(FaNum).ttf",
+    },
   ],
-  variable: '--font-iransans'
-})
+  variable: "--font-iransans",
+});
 const fedra = localFont({
   src: [
     {
-      path: '../../public/fonts/fedra/fedra.ttf',
-    }
+      path: "../../public/fonts/fedra/fedra.ttf",
+    },
   ],
-  variable: '--font-fedra'
-})
+  variable: "--font-fedra",
+});
 
 // export const metadata = {
 //   title: 'Create Next App',
@@ -29,13 +30,19 @@ const fedra = localFont({
 // }
 
 export default function RootLayout({ children }) {
-  const token = Cookies.get("token");
   const path = usePathname();
-  if(token.length == 0 && !path.includes('auth')) redirect('/pages/auth')
+  useEffect(()=>{
+    const token = Cookies.get("token");
+    if (!path.includes("auth")) {
+      if (!token){console.log("here1"); redirect("/pages/auth")};
+      if (token.length == 0){console.log("here2"); redirect("/pages/auth")};
+    }
+  } , [])
+  
 
   return (
     <html lang="en">
       <body className={iransans.variable}>{children}</body>
     </html>
-  )
+  );
 }

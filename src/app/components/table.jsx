@@ -11,6 +11,7 @@ export default function Table({ head, body }) {
       >
         <thead>
           <tr>
+          <th>ردیف</th>
             {head.map((th, index) => (
               <th key={index}>{th}</th>
             ))}
@@ -19,6 +20,7 @@ export default function Table({ head, body }) {
         <tbody>
           {body.map((tr, index) => (
             <tr className="hover" key={index}>
+            <td>{index + 1}</td>
               {tr.map((td, index2) => (
                 <td key={index2}>{td}</td>
               ))}
