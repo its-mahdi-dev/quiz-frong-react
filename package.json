@@ -12,6 +12,8 @@
     "@flaticon/flaticon-uicons": "^3.3.1",
     "@next/font": "^14.2.15",
     "axios": "^1.7.9",
+    "jalali-date": "^1.1.5",
+    "jdate": "^0.0.2",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "next": "13.5.7",
