@@ -4,6 +4,7 @@ import Select from "@/app/components/forms/select";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Cookies from 'js-cookie';
+import { useRouter } from "next/navigation";
 
 export default function Auth() {
   const [toggleForm, setToggleForm] = useState(false);
@@ -14,6 +15,7 @@ export default function Auth() {
   const [password,setPassword] = useState("");
   const [type,setType] = useState("");
   const [loading,setLoading] = useState(false);
+  const router = useRouter();
   const options = [
     { value: "0", label: "بازیکن" },
     { value: "1", label: "طراح" },
@@ -25,8 +27,10 @@ export default function Auth() {
       await axios.post("http://localhost:5000/api/auth/login" , {phone,password}
       ).then(function(response){
         let token = response.data.token;
+        let type = response.data.type;
         Cookies.set('token',token)
-        document.getElementById('login-form').submit();
+        if(type == "player") router.push('/pages/player/question');
+        if(type == "designer") router.push('/pages/designer/question');
       }).catch(function(err){
         console.log(err)
       }).finally(function () {

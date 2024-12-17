@@ -21,8 +21,6 @@ export default function Question() {
     "مشاهده کامل",
   ];
   const [items, setItems] = useState([]);
-  const [itemsData, setItemsData] = useState([]);
-  const [test, setTest] = useState("");
   const [modals, setModals] = useState([]);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);

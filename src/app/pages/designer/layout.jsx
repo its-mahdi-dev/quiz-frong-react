@@ -1,9 +1,12 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Layout({children}) {
   const [menu, setMenu] = useState(false);
+  
+      const path = usePathname();
   return (
     <div>
       <header>
@@ -24,13 +27,13 @@ export default function Layout({children}) {
                 داشبورد
               </a>
             </li>
-            <li className="mb-3 bg-gray-38 rounded-lg">
+            <li className={`mb-3 ${path.include('category') ? 'bg-gray-38 rounded-lg' : ''}`}>
               <Link  href="/pages/designer/category">
                 <i className="fi fi-rr-apps"></i>
                 دسته بندی‌ها
               </Link>
             </li>
-            <li className="mb-3">
+            <li className={`mb-3 ${path.include('question') ? 'bg-gray-38 rounded-lg' : ''}`}>
               <Link href="/pages/designer/question">
                 <i className="fi fi-rr-question-square"></i>
                 سوالات
