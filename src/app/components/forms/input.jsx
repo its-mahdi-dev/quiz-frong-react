@@ -1,6 +1,15 @@
 import React from "react";
 
-export default function Input({ label, value, onChange }) {
+
+export default function Input({ label, value, onChange,type }) {
+  
+  if(type = "date"){
+    // jalaliDatepicker = require("/lib/jalali.min.js");
+    // jalaliDatepicker.startWatch({
+    //   maxDate: "attr",
+    //   minDate: 'attr'
+    // });
+  }
   const handleChange = (e) => {
     onChange(e.target.value); // Send the updated value to the parent
   };
@@ -15,6 +24,9 @@ export default function Input({ label, value, onChange }) {
           data-max="5"
           data-validations="required,persian"
           value={value}
+          data-jdp
+          data-jdp-min-date="today"
+          data-jdp-max-date="1405/01/01"
         />
         <label className={value.length >0 ? 'active' : ''}>{label}</label>
 
