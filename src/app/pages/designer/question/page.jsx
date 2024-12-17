@@ -26,6 +26,7 @@ export default function Question() {
   const [modals, setModals] = useState([]);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
+  const [loadingBtn, setLoadingBtn] = useState(false);
   const [body, setBody] = useState("");
   const [correct_answer, setCorrect_answer] = useState("");
   const [duration, setDuration] = useState("");
@@ -107,6 +108,7 @@ export default function Question() {
  
   const addQuestion = async (e) => {
     if (!token) return;
+    setLoadingBtn(true);
     const data = {
       body,
       correct_answer,
@@ -127,6 +129,8 @@ export default function Question() {
       .catch(function (err) {
         if (err.status == 401) router.push("/pages/auth");
         console.log(err);
+      }).finally(function(){
+        setLoadingBtn(false);
       });
   };
 
@@ -248,7 +252,9 @@ export default function Question() {
                   className="btn btn-active btn-accent w-full"
                   onClick={() => addQuestion()}
                 >
-                  افزودن
+                  {!loadingBtn ? "افزودن" : (
+                  <span className="loading loading-dots loading-md"></span>
+                )}
                 </button>
               </div>
             </div>
