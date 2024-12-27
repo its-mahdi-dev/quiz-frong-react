@@ -89,8 +89,6 @@ export default function Question() {
       .catch(function (err) {
         if (err.status == 401) router.push("/pages/auth");
         console.log(err);
-      }).finally(function(){
-        setLoadingBtn(false);
       })
   }
   return (

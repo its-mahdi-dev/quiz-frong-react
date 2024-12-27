@@ -22,10 +22,77 @@ export default function Auth() {
     { value: "0", label: "بازیکن" },
     { value: "1", label: "طراح" },
   ];
-  console.log(process.env);
+
+  const [mY, setMy] = useState(0);
+  const [mX, setMx] = useState(0);
+
+  const tiltEffectSettings = {
+    max: 12,
+    perspective: 2500,
+    scale: 1.1,
+    speed: 1000,
+    easing: "cubic-bezier(.03,.98,.52,.99)",
+  };
+  let card;
+  // document.addEventListener('mouseover', handleMouseLeave);
+  function handleMouseEnter(event) {
+    setTransition(event);
+  }
+
+  function handleMouseMove(event) {
+    const cardWidth = card.offsetWidth;
+    const cardHeight = card.offsetHeight;
+    const centerX = card.offsetLeft + cardWidth / 2;
+    const centerY = card.offsetTop + cardHeight / 2;
+    const mouseX = event.clientX - centerX;
+    const mouseY = event.clientY - centerY;
+    const rotateXUncapped =
+      (+1 * tiltEffectSettings.max * mouseY) / (cardHeight / 2);
+    const rotateYUncapped =
+      (-1 * tiltEffectSettings.max * mouseX) / (cardWidth / 2);
+    const rotateX =
+      rotateXUncapped < -tiltEffectSettings.max
+        ? -tiltEffectSettings.max
+        : rotateXUncapped > tiltEffectSettings.max
+        ? tiltEffectSettings.max
+        : rotateXUncapped;
+    const rotateY =
+      rotateYUncapped < -tiltEffectSettings.max
+        ? -tiltEffectSettings.max
+        : rotateYUncapped > tiltEffectSettings.max
+        ? tiltEffectSettings.max
+        : rotateYUncapped;
+
+    card.style.transform = `perspective(${tiltEffectSettings.perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)
+                          scale3d(${tiltEffectSettings.scale}, ${tiltEffectSettings.scale}, ${tiltEffectSettings.scale})`;
+  }
+
+  function handleMouseLeave(event) {
+    console.log(event.currentTarget);
+    event.currentTarget.style.transform = `perspective(${tiltEffectSettings.perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    setTransition(event);
+  }
+
+  function setTransition(event) {
+    clearTimeout(card.transitionTimeoutId);
+    card.style.transition = `transform ${tiltEffectSettings.speed}ms ${tiltEffectSettings.easing}`;
+    card.transitionTimeoutId = setTimeout(() => {
+      card.style.transition = "";
+    }, tiltEffectSettings.speed);
+  }
+
+  useEffect(() => {
+    document.addEventListener("mousemove", function (event) {
+      setMx(event.clientX - 200);
+      setMy(event.clientY - 200);
+    });
+    card = document.getElementById("myCard");
+    document.addEventListener("mouseover", handleMouseEnter);
+    document.addEventListener("mouseover", handleMouseMove);
+  }, []);
   const login = async (e) => {
     e.preventDefault();
-    if(errLoginMsg.length > 0) return;
+    if (errLoginMsg.length > 0) return;
     setLoading(true);
     await axios
       .post("http://localhost:5000/api/auth/login", { phone, password })
@@ -39,13 +106,10 @@ export default function Auth() {
       .catch(function (err) {
         console.log(err);
       })
-      .finally(function () {
-        setLoading(false);
-      });
   };
   const signup = async (e) => {
     e.preventDefault();
-    if(errSignupMsg.length > 0) return;
+    if (errSignupMsg.length > 0) return;
     setLoading(true);
     let data = {
       first_name: name,
@@ -65,15 +129,15 @@ export default function Auth() {
       .catch(function (err) {
         console.log(err);
       })
-      .finally(function () {
-        setLoading(false);
-      });
   };
   return (
     <div>
       <div
         className="absolute w-[400px] h-[400px] rounded-full blur-3xl mouseover"
-        id="backdrop"
+        style={{
+          left:mX + "px",
+          top: mY + "px"
+        }}
       ></div>
       <div className="pt-32">
         <div
@@ -120,8 +184,10 @@ export default function Auth() {
                   value={password}
                   label="گذرواژه"
                 />
-                
-              <span className="-text-error text-xs error-message mt-4">{errLoginMsg}</span>
+
+                <span className="-text-error text-xs error-message mt-4">
+                  {errLoginMsg}
+                </span>
                 <button
                   className="w-full rounded-lg bg-gradient-to-t from-purple-700 to-purple-500 h-12 flex items-center justify-center mt-2"
                   type="submit"
@@ -199,7 +265,9 @@ export default function Auth() {
                   label="نوع بازیکن"
                   options={options}
                 />
-              <span className="mb-1 -text-error text-xs error-message mt-4">{errSignupMsg}</span>
+                <span className="mb-1 -text-error text-xs error-message mt-4">
+                  {errSignupMsg}
+                </span>
                 <button
                   className="w-full rounded-lg bg-gradient-to-t from-purple-700 to-purple-500 h-12 flex items-center justify-center mt-2"
                   type="submit"
