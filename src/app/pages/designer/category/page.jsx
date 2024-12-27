@@ -9,6 +9,7 @@ export default function Category() {
   const [name, setName] = useState("");
   const [items, setItems] = useState([]);
   const [token, setToken] = useState("");
+  const [errMsg , setErrMsg] = useState("");
   const router = useRouter();
   let head = ["نام دسته بندی"];
   const searchIndexes = [0];
@@ -35,6 +36,7 @@ export default function Category() {
   }, [token]);
   const addCategory = async () => {
     if(!token) return;
+    if(errMsg.length) return;
     await axios
       .post("http://localhost:5000/api/designer/categories", {name}, {
         headers: { authorization: `Bearer ${token}` },
@@ -56,7 +58,7 @@ export default function Category() {
       <div className="p-4 bg-gray-38 bg-opacity-35 backdrop-blur-2xl shadow-lg rounded-xl">
         <h2 className="font-fedra mb-2 text-xl">ایجاد دسته بندی</h2>
         <div action="create" className="flex flex-wrap">
-          <Input value={name} onChange={setName} label="نام دسته بندی" />
+          <Input value={name} onChange={(val , err)=>{setName(val); setErrMsg(err);}} label="نام دسته بندی" validations={["required"]}/>
           <div className="lg:w-1/2 w-full lg:pe-1 mt-2 lg:pr-3">
             <button className="btn btn-active btn-accent lg:w-1/2 w-full" onClick={()=>{addCategory()}}>
               افزودن

@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import Cookies from "js-cookie";
+import { redirect, usePathname } from "next/navigation";
 
 export default function Layout({ children }) {
   const [menu, setMenu] = useState(false);
@@ -72,6 +73,11 @@ export default function Layout({ children }) {
     generateHalfCirclesInOrder();
     generateCenterCircles();
   }, []);
+
+  const logout = ()=>{
+    Cookies.remove("token");
+    redirect("/pages/auth");
+  }
   return (
     <div>
       <header>
@@ -117,6 +123,14 @@ export default function Layout({ children }) {
                 <i className="fi fi-rr-question-square"></i>
                 سوالات
               </Link>
+            </li>
+            <li
+              className={`mb-3 `}
+            >
+            <button onClick={logout}>
+              <i class="fi fi-rr-sign-out-alt"></i>
+                خروج
+                </button>
             </li>
           </ul>
         </nav>

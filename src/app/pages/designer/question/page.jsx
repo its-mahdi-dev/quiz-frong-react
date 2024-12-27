@@ -21,12 +21,13 @@ export default function Question() {
     "مشاهده کامل",
   ];
   const [items, setItems] = useState([]);
+  const [errMsg, setErrMsg] = useState([]);
   const [modals, setModals] = useState([]);
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [body, setBody] = useState("");
-  const [correct_answer, setCorrect_answer] = useState("");
+  const [correct_answer, setCorrect_answer] = useState();
   const [duration, setDuration] = useState("");
   const [start_time, setStart_time] = useState("");
   const [end_time, setEnd_time] = useState("");
@@ -106,6 +107,11 @@ export default function Question() {
  
   const addQuestion = async (e) => {
     if (!token) return;
+    if(errMsg.length > 0) return;
+    if(!correct_answer){
+      setErrMsg("لطفا گزینه صحیح این سوال را انتخاب کنید");
+      return;
+    }
     setLoadingBtn(true);
     const data = {
       body,
@@ -148,7 +154,7 @@ export default function Question() {
           <div action="create" className="flex flex-wrap">
             <div className="w-full lg:pe-1 mt-2 check-input relative">
               <span className="mb-1 -text-error text-xs error-message absolute -top-4"></span>
-              <Input label="شرح سوال" value={body} onChange={setBody} />
+              <Input label="شرح سوال" value={body} onChange={(val , err) => {setBody(val); setErrMsg(err)}} validations={["required"]} min={10} />
             </div>
             <div className="lg:w-1/2 w-full lg:pr-10 pr-3 mt-4">
               <div className="lg:pe-1 mt-2 check-input relative">
@@ -164,7 +170,8 @@ export default function Question() {
                   <Input
                     label="گزینه یک"
                     value={answers[0]}
-                    onChange={(value) => setNewAnswer(value, 0)}
+                    onChange={(value,err) => {setNewAnswer(value, 0); setErrMsg(err);}}
+                    validations={["required"]}
                   />
                 </div>
               </div>
@@ -182,7 +189,8 @@ export default function Question() {
                   <Input
                     label="گزینه دو"
                     value={answers[1]}
-                    onChange={(value) => setNewAnswer(value, 1)}
+                    onChange={(value,err) => {setNewAnswer(value, 1); setErrMsg(err);}}
+                    validations={["required"]}
                   />
                 </div>
               </div>
@@ -200,7 +208,8 @@ export default function Question() {
                   <Input
                     label="گزینه سه"
                     value={answers[2]}
-                    onChange={(value) => setNewAnswer(value, 2)}
+                    onChange={(value,err) => {setNewAnswer(value, 2); setErrMsg(err);}}
+                    validations={["required"]}
                   />
                 </div>
               </div>
@@ -218,7 +227,8 @@ export default function Question() {
                   <Input
                     label="گزینه چهار"
                     value={answers[3]}
-                    onChange={(value) => setNewAnswer(value, 3)}
+                    onChange={(value,err) => {setNewAnswer(value, 3); setErrMsg(err);}}
+                    validations={["required"]}
                   />
                 </div>
               </div>
@@ -227,8 +237,9 @@ export default function Question() {
               <Select options={categories} onChange={setCategory_id} />
               <Input
                 value={duration}
-                onChange={setDuration}
+                onChange={(val , err) => {setDuration(val); setErrMsg(err)}}
                 label="مدت زمان پاسخگویی (به ثانیه)"
+                validations={["required" , "number"]}
               />
               <Input
                 value={start_time}
@@ -243,9 +254,9 @@ export default function Question() {
                 type="date"
               />
             </div>
-            <span className="-text-error form-error mt-4 block text-center w-full"></span>
+            <span className="-text-error form-error mt-4 block text-center w-full">{errMsg}</span>
             <div className="w-full">
-              <div className="lg:w-1/2 w-full lg:pe-1 mt-8">
+              <div className="lg:w-1/2 w-full lg:pe-1 mt-6 mb-8">
                 <button
                   className="btn btn-active btn-accent w-full"
                   onClick={() => addQuestion()}

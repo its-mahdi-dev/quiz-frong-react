@@ -70,6 +70,10 @@ export default function Layout({ children }) {
     generateHalfCirclesInOrder();
     generateCenterCircles();
   }, []);
+  const logout = ()=>{
+    Cookies.remove("token");
+    redirect("/pages/auth");
+  }
   return (
     <div>
       <header>
@@ -115,6 +119,14 @@ export default function Layout({ children }) {
                 <i className="fi fi-rr-medal"></i>
                 امتیازات
               </Link>
+            </li>
+            <li
+              className={`mb-3 `}
+            >
+            <button onClick={logout}>
+              <i class="fi fi-rr-sign-out-alt"></i>
+                خروج
+                </button>
             </li>
           </ul>
         </nav>
