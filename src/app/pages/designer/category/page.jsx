@@ -70,6 +70,7 @@ export default function Category() {
         body={items}
         title="مدیریت دسته بندی"
         searchIndexes={searchIndexes}
+        modals={[]}
       />
     </div>
   );
