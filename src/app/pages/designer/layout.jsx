@@ -128,7 +128,7 @@ export default function Layout({ children }) {
               className={`mb-3 `}
             >
             <button onClick={logout}>
-              <i class="fi fi-rr-sign-out-alt"></i>
+              <i className="fi fi-rr-sign-out-alt"></i>
                 خروج
                 </button>
             </li>

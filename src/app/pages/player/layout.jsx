@@ -1,11 +1,13 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 export default function Layout({ children }) {
   const path = usePathname();
   const [menu, setMenu] = useState(false);
+  const router = useRouter();
   function getRandomPurple() {
     const purpleShades = [
       "#9b5de5",
@@ -72,7 +74,7 @@ export default function Layout({ children }) {
   }, []);
   const logout = ()=>{
     Cookies.remove("token");
-    redirect("/pages/auth");
+    router.push("/pages/auth");
   }
   return (
     <div>
@@ -124,7 +126,7 @@ export default function Layout({ children }) {
               className={`mb-3 `}
             >
             <button onClick={logout}>
-              <i class="fi fi-rr-sign-out-alt"></i>
+              <i className="fi fi-rr-sign-out-alt"></i>
                 خروج
                 </button>
             </li>

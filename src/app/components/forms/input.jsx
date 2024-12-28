@@ -68,7 +68,6 @@ export default function Input({
   };
   const handleChange = (e) => {
     let err = checkValidations(e.target.value);
-    console.log("err: " , err)
     setErrMsg(err);
     onChange(e.target.value, err);
   };

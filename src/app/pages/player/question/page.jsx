@@ -15,6 +15,9 @@ export default function Question() {
     "پاسخ درست",
     "مشاهده سوال",
   ];
+  const [page, setPage] = useState(1);
+  const [total_page, setTotal_page] = useState(1);
+  const [search, setSearch] = useState("");
   const [items, setItems] = useState([]);
   const [modals, setModals] = useState([]);
   const [token, setToken] = useState("");
@@ -24,17 +27,18 @@ export default function Question() {
   const router = useRouter();
   const searchIndexes = [0, 1];
   const updateItems = (data) => {
-    data.forEach((value)=>{
-        value.question.answers.forEach((item) =>{
-            if(item.id == value.question.correct_answer_id) value.correct_answer = item.order + 1;
-        })
-    })
+    data.forEach((value) => {
+      value.question.answers.forEach((item) => {
+        if (item.id == value.question.correct_answer_id)
+          value.correct_answer = item.order + 1;
+      });
+    });
     let newItems = data.map((item) => [
       item.question.body,
       item.question.category.name,
       item.question.duration,
       item.answer.order + 1,
-      item.correct_answer
+      item.correct_answer,
     ]);
 
     let new_modals = [];
@@ -53,14 +57,24 @@ export default function Question() {
     setItems(newItems);
     setLoading(false);
   };
-  const getQuestions = async () => {
+  const getQuestions = async (val = "", next_page = 1) => {
     if (!token) return;
+    if ((next_page > total_page && total_page != 0) || next_page == 0) return;
+    setLoading(true);
     await axios
-      .get("http://localhost:5000/api/player/questions", {
-        headers: { authorization: `Bearer ${token}` },
-      })
+      .get(
+        "http://localhost:5000/api/player/questions?search=" +
+          val +
+          "&page=" +
+          next_page,
+        {
+          headers: { authorization: `Bearer ${token}` },
+        }
+      )
       .then(function (response) {
-        let data = response.data;
+        let data = response.data.data;
+        setPage(response.data.meta.currentPage);
+        setTotal_page(response.data.meta.totalPages);
         updateItems(data);
       })
       .catch(function (err) {
@@ -74,8 +88,8 @@ export default function Question() {
     getQuestions();
   }, [token]);
 
-  const submitRandomQuestion = async () =>{
-    if(!token) return;
+  const submitRandomQuestion = async () => {
+    if (!token) return;
     setLoadingBtn(true);
     await axios
       .get("http://localhost:5000/api/player/questions/random", {
@@ -83,34 +97,47 @@ export default function Question() {
       })
       .then(function (response) {
         let data = response.data;
-        if(data) router.push('/pages/player/question/' + data)
+        if (data) router.push("/pages/player/question/" + data);
         else setErrMsg("سوالی یافت نشد. لطفا مجددا تلاش کنید");
       })
       .catch(function (err) {
         if (err.status == 401) router.push("/pages/auth");
         console.log(err);
-      })
-  }
+      });
+  };
   return (
     <section className="p-3">
       <div className="w-full">
         <button
-        onClick={() => submitRandomQuestion() }
+          onClick={() => submitRandomQuestion()}
           className="btn btn-active btn-primary lg:w-1/2 w-full text-white"
         >
-        {loadingBtn ? (
+          {loadingBtn ? (
             <span className="loading loading-dots loading-md"></span>
-        ) : "پاسخ به سوال جدید"}
+          ) : (
+            "پاسخ به سوال جدید"
+          )}
         </button>
         <span className="-text-error">{errMsg}</span>
       </div>
-      {loading ? (
-        <div className="text-center mt-8">
-            <span className="loading loading-bars loading-lg"></span>
-          </div>
-      ):(
-        <SearchTable body={items} head={head} modals={modals} title="سوالات پاسخ داده شده شما" searchIndexes={searchIndexes}/>
-      )}
+
+      <SearchTable
+        body={items}
+        head={head}
+        modals={modals}
+        title="سوالات پاسخ داده شده شما"
+        searchIndexes={searchIndexes}
+        search_api={true}
+        onSearch={(val) => {
+          setSearch(val);
+          getQuestions(val, page);
+        }}
+        changePage={(offset) => {
+          setPage(page + offset);
+          getQuestions(search, page + offset);
+        }}
+        loading={loading}
+      />
     </section>
   );
 }
