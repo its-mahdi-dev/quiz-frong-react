@@ -23,7 +23,7 @@ export default function Category() {
     setLoading(true);
     await axios
       .get(
-        "http://localhost:5000/api/designer/categories?limit=5&search=" +
+        "http://localhost:8080/api/designer/categories?limit=5&search=" +
           val +
           "&page=" +
           next_page,
@@ -55,7 +55,7 @@ export default function Category() {
     setLoading(true);
     await axios
       .post(
-        "http://localhost:5000/api/designer/categories",
+        "http://localhost:8080/api/designer/categories",
         { name },
         {
           headers: { authorization: `Bearer ${token}` },

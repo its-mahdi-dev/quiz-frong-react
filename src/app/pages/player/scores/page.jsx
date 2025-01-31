@@ -1,4 +1,5 @@
 "use client";
+import Button from "@/app/components/button";
 import SearchTable from "@/app/components/searchTable";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -18,41 +19,73 @@ export default function Scores() {
     "امتیاز",
     "تعداد پاسخ های درست",
     "تعداد پاسخ های غلط",
+    "دنبال کردن",
   ];
   const searchIndexes = [0];
+  const followUnFollw = async (user_id, status) => {
+    
+    try {
+      if (status) {
+        // Unfollow
+        await axios.delete(`http://localhost:8080/api/follow/${user_id}`, {
+          headers: { authorization: `Bearer ${token}` },
+        });
+      } else {
+        // Follow
+        await axios.post(`http://localhost:8080/api/follow/${user_id}`, {}, {
+          headers: { authorization: `Bearer ${token}` },
+        });
+      }
+
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        router.push("/pages/auth");
+      }
+      console.error(err);
+    }
+  };
+
   const getScores = async (val = "", next_page = 1) => {
     if (!token) return;
-    if ((next_page > total_page && total_page != 0) || next_page == 0) return;
+    if ((next_page > total_page && total_page !== 0) || next_page === 0) return;
+
     setLoading(true);
-    await axios
-      .get(
-        "http://localhost:5000/api/player/scores?search=" +
-          val +
-          "&page=" +
-          next_page,
+    
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/api/player/scores?search=${val}&page=${next_page}`,
         {
           headers: { authorization: `Bearer ${token}` },
         }
-      )
-      .then(function (response) {
-        let data = response.data.data;
-        setPage(response.data.meta.currentPage);
-        setTotal_page(response.data.meta.totalPages);
-        const result = data.map((item) => [
-          item.first_name + " " + item.last_name,
-          item.score,
-          item.correct_answers,
-          item.wrong_answers,
-        ]);
-        setItems(result);
-      })
-      .catch(function (err) {
-        if (err.status == 401) router.push("/pages/auth");
-        console.log(err);
-      })
-      .finally(function () {
-        setLoading(false);
-      });
+      );
+
+      const data = response.data.data;
+      setPage(response.data.meta.currentPage);
+      setTotal_page(response.data.meta.totalPages);
+
+      // Map over data to create rows with Button component
+      const result = data.map((item) => [
+        item.firstName + " " + item.lastName,
+        item.score,
+        item.correctAnswers,
+        item.wrongAnswers,
+        <Button
+          key={item.id}
+          label={item.isFollowing ? 'لغو دنبال کردن' : 'دنبال کردن'}
+          onClick={() => followUnFollw(item.id, item.isFollowing)}
+          loading={false}
+        />,
+      ]);
+
+      setItems(result);
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        router.push("/pages/auth");
+      }
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     setToken(Cookies.get("token"));
@@ -60,6 +93,7 @@ export default function Scores() {
   }, [token]);
   return (
     <section className="p-3 w-full pt-6">
+    
       <SearchTable
         body={items}
         head={head}

@@ -95,7 +95,7 @@ export default function Auth() {
     if (errLoginMsg.length > 0) return;
     setLoading(true);
     await axios
-      .post("http://localhost:5000/api/auth/login", { phone, password })
+      .post("http://localhost:8080/api/auth/login", { phone, password })
       .then(function (response) {
         let token = response.data.token;
         let type = response.data.type;

@@ -30,12 +30,11 @@ export default function Question() {
   const [loading, setLoading] = useState(true);
   const [loadingBtn, setLoadingBtn] = useState(false);
   const [body, setBody] = useState("");
-  const [correctAnswerId, setCorrectAnswerId] = useState();
-  const [hasError, setHasError] = useState(false);
+  const [correct_answer, setCorrect_answer] = useState();
   const [duration, setDuration] = useState("");
-  const [startTime, setstartTime] = useState("");
-  const [endTime, setendTime] = useState("");
-  const [categoryId, setcategoryId] = useState("");
+  const [start_time, setStart_time] = useState("");
+  const [end_time, setEnd_time] = useState("");
+  const [category_id, setCategory_id] = useState("");
   const [categories, setCategories] = useState([]);
   const [answers, setAnswers] = useState(["", "", "", ""]);
   const router = useRouter();
@@ -44,10 +43,10 @@ export default function Question() {
   const updateItems = (data) => {
     let newItems = data.map((item) => [
       item.body,
-      item.categoryName,
+      item.category.name,
       item.user.first_name + " " + item.user.last_name,
       JDate(item.createdAt).toString("yyyy/MM/dd HH:mm"),
-      JDate(item.startTime).toString("yyyy/MM/dd HH:mm"),
+      JDate(item.start_time).toString("yyyy/MM/dd HH:mm"),
       item.duration,
     ]);
 
@@ -121,29 +120,28 @@ export default function Question() {
   const addQuestion = async (e) => {
     if (!token) return;
     if (errMsg.length > 0) return;
-    if (!correctAnswerId) {
+    if (!correct_answer) {
       setErrMsg("لطفا گزینه صحیح این سوال را انتخاب کنید");
       return;
     }
 
     
     setLoadingBtn(true);
-    let new_answers = [];
     answers.forEach(ans => {
         let new_ans = {
-            body: ans
+            answerText: ans
         }
         new_answers = [...new_answers, new_ans];
     })
     const data = {
         body,
-        correctAnswerId : Number(correctAnswerId),
+        correct_answer,
         duration,
-        startTime,
-        endTime,
-        categoryId,
+        start_time,
+        end_time,
+        category_id,
         answers: new_answers,
-    }; 
+    };
     await axios
       .post("http://localhost:8080/api/designer/questions", data, {
         headers: { authorization: `Bearer ${token}` },
@@ -157,7 +155,7 @@ export default function Question() {
         console.log(err);
       })
       .finally(function () {
-           setLoadingBtn(false);
+        setLoadingBtn(false);
       });
   };
 
@@ -198,7 +196,7 @@ export default function Question() {
                     value="0"
                     className="radio radio-success ml-2"
                     onChange={(e) => {
-                      setCorrectAnswer(e.target.value);
+                      setCorrect_answer(e.target.value);
                     }}
                   />
                   <Input
@@ -221,7 +219,7 @@ export default function Question() {
                     value="1"
                     className="radio radio-success ml-2"
                     onChange={(e) => {
-                      setCorrectAnswer(e.target.value);
+                      setCorrect_answer(e.target.value);
                     }}
                   />
 
@@ -245,7 +243,7 @@ export default function Question() {
                     value="2"
                     className="radio radio-success ml-2"
                     onChange={(e) => {
-                      setCorrectAnswer(e.target.value);
+                      setCorrect_answer(e.target.value);
                     }}
                   />
 
@@ -269,7 +267,7 @@ export default function Question() {
                     value="3"
                     className="radio radio-success ml-2"
                     onChange={(e) => {
-                      setCorrectAnswerId(e.target.value);
+                      setCorrect_answer(e.target.value);
                     }}
                   />
 
@@ -286,7 +284,7 @@ export default function Question() {
               </div>
             </div>
             <div className="flex flex-wrap w-full mt-4">
-              <Select options={categories} onChange={setcategoryId} />
+              <Select options={categories} onChange={setCategory_id} />
               <Input
                 value={duration}
                 onChange={(val, err) => {
@@ -297,14 +295,14 @@ export default function Question() {
                 validations={["required", "number"]}
               />
               <Input
-                value={startTime}
-                onChange={setstartTime}
+                value={start_time}
+                onChange={setStart_time}
                 label="تاریخ شروع سوال"
                 type="date"
               />
               <Input
-                value={endTime}
-                onChange={setendTime}
+                value={end_time}
+                onChange={setEnd_time}
                 label="تاریخ پایان سوال"
                 type="date"
               />

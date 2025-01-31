@@ -4,6 +4,7 @@ export default function Table({ head, body ,modals}) {
   function getModal(index) {
     return modals[index];
   }
+
   return (
     <div className="overflow-x-auto">
       <input type="hidden" className="modal-toggle"/>
@@ -27,7 +28,9 @@ export default function Table({ head, body ,modals}) {
               {tr.map((td, index2) => (
                 <td key={index2}>{td}</td>
               ))}
-              <td>
+
+              {modals.length > 0 ? (
+                <td>
                     <label
                       htmlFor={`my_modal_${index}`}
                       className="cursor-pointer text-accent"
@@ -35,7 +38,11 @@ export default function Table({ head, body ,modals}) {
                       مشاهده
                     </label>
                   </td>
-                  <td>{modals[index]}</td>
+              ): ""}
+              {modals.length > 0 ? (
+                <td>{modals[index]}</td>
+              ): ""}
+              
                   
             </tr>
           ))}

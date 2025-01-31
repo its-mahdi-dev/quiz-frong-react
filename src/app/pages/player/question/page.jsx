@@ -28,26 +28,26 @@ export default function Question() {
   const searchIndexes = [0, 1];
   const updateItems = (data) => {
     data.forEach((value) => {
-      value.question.answers.forEach((item) => {
-        if (item.id == value.question.correct_answer_id)
-          value.correct_answer = item.order + 1;
+      value.answers.forEach((item) => {
+        if (item.id == value.correctAnswerId)
+          value.correct_answer_id = item.order + 1;
       });
     });
     let newItems = data.map((item) => [
-      item.question.body,
-      item.question.category.name,
-      item.question.duration,
+      item.body,
+      item.categoryName,
+      item.duration,
       item.answer.order + 1,
-      item.correct_answer,
+      item.correct_answer_id,
     ]);
 
     let new_modals = [];
     data.forEach((item, index) => {
       let modal = (
         <QuestionAnswer
-          body={item.question.body}
-          answers={item.question.answers}
-          correct_answer_id={item.question.correct_answer_id}
+          body={item.body}
+          answers={item.answers}
+          correctAnswerId={item.correctAnswerId}
           index={index}
         />
       );
@@ -63,7 +63,7 @@ export default function Question() {
     setLoading(true);
     await axios
       .get(
-        "http://localhost:5000/api/player/questions?search=" +
+        "http://localhost:8080/api/player/questions?search=" +
           val +
           "&page=" +
           next_page,
@@ -92,7 +92,7 @@ export default function Question() {
     if (!token) return;
     setLoadingBtn(true);
     await axios
-      .get("http://localhost:5000/api/player/questions/random", {
+      .get("http://localhost:8080/api/player/questions/random", {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {

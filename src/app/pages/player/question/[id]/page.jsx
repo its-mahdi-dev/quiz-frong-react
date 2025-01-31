@@ -13,18 +13,21 @@ export default function SingleQuestion() {
   const [answers, setAnswers] = useState("");
   const [duration, setDuration] = useState("");
   const [answer, setAnswer] = useState("");
+  const [userId, setUserId] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadingBtn, setLoadingBtn] = useState(false);
+  const [loadingFollow, setLoadingFollow] = useState(false);
   const [days, setdays] = useState();
   const [hours, sethours] = useState();
   const [minutes, setminutes] = useState();
   const [seconds, setseconds] = useState();
+  const [isFollow, setIsFollow] = useState(false);
   const router = useRouter();
 
   const getQuestion = async () => {
     if (!token) return;
     await axios
-      .get("http://localhost:5000/api/player/questions/" + id, {
+      .get("http://localhost:8080/api/player/questions/" + id, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -32,6 +35,7 @@ export default function SingleQuestion() {
         setBody(data.body);
         setAnswers(data.answers);
         setDuration(new Date(new Date().getTime() + data.duration * 1000));
+        setUserId(data.user.id);
         setLoading(false);
       })
       .catch(function (err) {
@@ -40,12 +44,59 @@ export default function SingleQuestion() {
       });
   };
 
+  const getFollowStatus = async () => {
+    if (!token) return;
+    await axios
+      .get("http://localhost:8080/api/follow/" + id, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(function (response) {
+        let data = response.data;
+        if (data.message == "true") setIsFollow(true);
+      })
+      .catch(function (err) {
+        if (err.status == 401) router.push("/pages/auth");
+        console.log(err);
+      });
+  };
   useEffect(() => {
     setToken(Cookies.get("token"));
+    getFollowStatus();
     getQuestion();
   }, [token]);
 
-  // Update the count down every 1 second
+  const followUnfollow = async () =>{
+    setLoadingFollow(true);
+    if(isFollow){
+      await axios
+      .delete("http://localhost:8080/api/follow/" + id, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(function (response) {
+        let data = response.data;
+        setIsFollow(!isFollow);
+        setLoadingFollow(false);
+      })
+      .catch(function (err) {
+        if (err.status == 401) router.push("/pages/auth");
+        console.log(err);
+      });
+    }else{
+      await axios
+      .post("http://localhost:8080/api/follow/" + id, {} ,{
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then(function (response) {
+        let data = response.data;
+        setIsFollow(!isFollow);
+        setLoadingFollow(false);
+      })
+      .catch(function (err) {
+        if (err.status == 401) router.push("/pages/auth");
+        console.log(err);
+      });
+    }
+  }
   var x = setInterval(function () {
     // Get today's date and time
     var now = new Date().getTime();
@@ -71,10 +122,9 @@ export default function SingleQuestion() {
       return;
     }
     setLoadingBtn(true);
-    console.log(answer);
-    const data = { answer_id: answer };
+    const data = Number(answer) ;
     await axios
-      .post("http://localhost:5000/api/player/questions/" + id, data, {
+      .post("http://localhost:8080/api/player/questions/" + id + "?answer_id=" + data, {}, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -88,6 +138,7 @@ export default function SingleQuestion() {
         setLoadingBtn(false);
       });
   };
+
   return (
     <section className="p-3 w-full">
       {loading ? (
@@ -154,6 +205,22 @@ export default function SingleQuestion() {
                       <span className="loading loading-dots loading-md"></span>
                     ) : (
                       "ثبت پاسخ"
+                    )}
+                  </button>
+                </div>
+                <div className="lg:w-1/2 w-full lg:pe-1 mt-8">
+                  <button
+                    className={`btn btn-accent w-full submit-btn ${
+                      !isFollow ? "bg-indigo-400" : "bg-amber-400"
+                    }`}
+                    onClick={() => followUnfollow()}
+                  >
+                    {loadingFollow ? (
+                      <span className="loading loading-dots loading-md"></span>
+                    ) : !isFollow ? (
+                      "دنبال کردن طراح سوال"
+                    ) : (
+                      "لغو دنبال کردن"
                     )}
                   </button>
                 </div>
