@@ -27,7 +27,7 @@ export default function SingleQuestion() {
   const getQuestion = async () => {
     if (!token) return;
     await axios
-      .get("http://localhost:8080/api/player/questions/" + id, {
+      .get("http://localhost:8081/api/player/questions/" + id, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -47,7 +47,7 @@ export default function SingleQuestion() {
   const getFollowStatus = async () => {
     if (!token) return;
     await axios
-      .get("http://localhost:8080/api/follow/" + id, {
+      .get("http://localhost:8081/api/follow/" + id, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -69,7 +69,7 @@ export default function SingleQuestion() {
     setLoadingFollow(true);
     if(isFollow){
       await axios
-      .delete("http://localhost:8080/api/follow/" + id, {
+      .delete("http://localhost:8081/api/follow/" + id, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -83,7 +83,7 @@ export default function SingleQuestion() {
       });
     }else{
       await axios
-      .post("http://localhost:8080/api/follow/" + id, {} ,{
+      .post("http://localhost:8081/api/follow/" + id, {} ,{
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -124,7 +124,7 @@ export default function SingleQuestion() {
     setLoadingBtn(true);
     const data = Number(answer) ;
     await axios
-      .post("http://localhost:8080/api/player/questions/" + id + "?answer_id=" + data, {}, {
+      .post("http://localhost:8081/api/player/questions/" + id + "?answer_id=" + data, {}, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {

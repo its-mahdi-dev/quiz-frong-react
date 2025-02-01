@@ -73,7 +73,7 @@ export default function Question() {
     setLoading(true);
     await axios
       .get(
-        "http://localhost:8080/api/designer/questions?search=" +
+        "http://localhost:8082/api/designer/questions?search=" +
           val +
           "&page=" +
           next_page,
@@ -95,7 +95,7 @@ export default function Question() {
   const getCategories = async () => {
     if (!token) return;
     await axios
-      .get("http://localhost:8080/api/designer/categories", {
+      .get("http://localhost:8082/api/designer/categories", {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {
@@ -145,7 +145,7 @@ export default function Question() {
         answers: new_answers,
     }; 
     await axios
-      .post("http://localhost:8080/api/designer/questions", data, {
+      .post("http://localhost:8082/api/designer/questions", data, {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {

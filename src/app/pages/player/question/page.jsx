@@ -63,7 +63,7 @@ export default function Question() {
     setLoading(true);
     await axios
       .get(
-        "http://localhost:8080/api/player/questions?search=" +
+        "http://localhost:8081/api/player/questions?search=" +
           val +
           "&page=" +
           next_page,
@@ -92,7 +92,7 @@ export default function Question() {
     if (!token) return;
     setLoadingBtn(true);
     await axios
-      .get("http://localhost:8080/api/player/questions/random", {
+      .get("http://localhost:8081/api/player/questions/random", {
         headers: { authorization: `Bearer ${token}` },
       })
       .then(function (response) {

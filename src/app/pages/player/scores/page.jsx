@@ -27,12 +27,12 @@ export default function Scores() {
     try {
       if (status) {
         // Unfollow
-        await axios.delete(`http://localhost:8080/api/follow/${user_id}`, {
+        await axios.delete(`http://localhost:8081/api/follow/${user_id}`, {
           headers: { authorization: `Bearer ${token}` },
         });
       } else {
         // Follow
-        await axios.post(`http://localhost:8080/api/follow/${user_id}`, {}, {
+        await axios.post(`http://localhost:8081/api/follow/${user_id}`, {}, {
           headers: { authorization: `Bearer ${token}` },
         });
       }
@@ -53,7 +53,7 @@ export default function Scores() {
     
     try {
       const response = await axios.get(
-        `http://localhost:8080/api/player/scores?search=${val}&page=${next_page}`,
+        `http://localhost:8081/api/player/scores?search=${val}&page=${next_page}`,
         {
           headers: { authorization: `Bearer ${token}` },
         }
